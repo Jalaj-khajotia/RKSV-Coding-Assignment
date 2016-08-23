@@ -10,7 +10,6 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
         .success(function(data) {
             for (var i = 0; i < data.length; i++) {
                 var temp = data[i].split(',');
-                //console.info(temp[3]);
                 var tempdata = [parseInt(temp[0]), parseInt(temp[4])];
                 plot.push(tempdata);
             }
@@ -18,7 +17,6 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
                 "key": "Day Close",
                 "values": plot
             }];
-            // console.info(plot);
         })
         .error(function(data, status, headers, config) {
             console.log(status + " Data: " + data);
@@ -27,7 +25,6 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
 
     function ConnectSocket() {
         var myIoSocket = io.connect('http://kaboom.rksv.net/watch');
-
         var mySocket = socketFactory({
             ioSocket: myIoSocket
         });
@@ -35,6 +32,7 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
         mySocket.on('data', function(data) {
             console.info(data);
             $scope.currentPrice = '$' + data.split(',')[4];
+            // i am not able to send CLIENT_ACKNOWLEDGEMENT as no event associated to it is given.
             mySocket.emit('CLIENT_ACKNOWLEDGEMENT', function(data) {
                 var CLIENT_ACKNOWLEDGEMENT = 1;
                 console.log(data);
@@ -42,7 +40,7 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
 
         });
 
-        mySocket.on('connect', function() { // TIP: you can avoid listening on `connect` and listen on events directly too!
+        mySocket.on('connect', function() {
             mySocket.emit('ping', {});
             mySocket.emit('sub', {
                 state: true
@@ -83,7 +81,7 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
             },
             yAxis: {
                 tickFormat: function(d) {
-                    return d3.format(',0.00001')(d * 0.01);
+                    return d3.format(',0.2')(d);
                 }
             },
             zoom: {
@@ -97,6 +95,4 @@ app.controller('mainCtrl', function($scope, $http, socket, socketFactory) {
             }
         }
     };
-
-    console.info('hi');
 });
