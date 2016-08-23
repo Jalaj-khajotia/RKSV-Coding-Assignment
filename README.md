@@ -1,6 +1,6 @@
 # RKSV-Coding-Assignment
 
-1.install all dependencies by running the following command 
+1. Install all dependencies by running the following command 
 bower install
 
 2. If node http-server package is not installed please install by running the following command
